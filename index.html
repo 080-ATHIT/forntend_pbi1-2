@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Code Review Guide (080) — Sprint 1–2 Frontend</title>
+  <style>
+    :root {
+      --bg: #f6f8fb;
+      --surface: #ffffff;
+      --surface-soft: #f1f5f9;
+      --border: #e2e8f0;
+      --text: #1e293b;
+      --muted: #475569;
+      --accent: #2563eb;
+      --accent-soft: #eff6ff;
+      --accent-border: #bfdbfe;
+      --green-bg: #ecfdf5;
+      --green-text: #065f46;
+      --amber-bg: #fffbeb;
+      --amber-text: #92400e;
+      --code-bg: #0f172a;
+      --code-text: #e2e8f0;
+      --shadow: 0 4px 16px rgba(15, 23, 42, 0.06);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans Thai", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 270px minmax(0, 1fr);
+      min-height: 100vh;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+      padding: 28px 20px;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+    }
+
+    .brand {
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .brand-tag {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+    }
+
+    .brand h1 {
+      margin: 10px 0 4px;
+      font-size: 20px;
+      line-height: 1.3;
+      color: #0f172a;
+    }
+
+    .brand p {
+      margin: 0;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .nav-group-title {
+      margin: 18px 0 8px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #64748b;
+    }
+
+    .nav-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: 4px;
+    }
+
+    .nav-list a {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      padding: 8px 10px;
+      border-radius: 8px;
+      color: var(--text);
+      text-decoration: none;
+      font-size: 13.5px;
+      font-weight: 500;
+      line-height: 1.45;
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+
+    .nav-list a:hover {
+      background: var(--surface-soft);
+      color: var(--accent);
+    }
+
+    .nav-list a.active {
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .pbi-pill {
+      flex: none;
+      display: inline-block;
+      padding: 1px 7px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      margin-top: 2px;
+    }
+
+    .pbi-3 { background: #dcfce7; color: #15803d; }
+    .pbi-4 { background: #fef3c7; color: #b45309; }
+    .pbi-34 { background: #e0e7ff; color: #3730a3; }
+    .pbi-all { background: #e2e8f0; color: #334155; }
+
+    .section-title-group {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    /* Main Content */
+    .main {
+      padding: 36px 40px 80px;
+      max-width: 1080px;
+      width: 100%;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+      color: #fff;
+      border-radius: 16px;
+      padding: 28px 32px;
+      margin-bottom: 28px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero h2 {
+      margin: 0 0 8px;
+      font-size: 26px;
+      line-height: 1.3;
+    }
+
+    .hero p {
+      margin: 0;
+      color: #dbeafe;
+      font-size: 15px;
+    }
+
+    .hero-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    .hero-badge {
+      padding: 4px 12px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.16);
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 26px 28px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow);
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 14px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section-header h3 {
+      margin: 0;
+      font-size: 20px;
+      color: #0f172a;
+    }
+
+    .file-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      border-radius: 999px;
+      background: var(--surface-soft);
+      border: 1px solid var(--border);
+      font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+      font-size: 12.5px;
+      color: #334155;
+    }
+
+    .sub-heading {
+      margin: 22px 0 10px;
+      font-size: 16px;
+      font-weight: 700;
+      color: #1e3a8a;
+    }
+
+    .explain-list {
+      margin: 10px 0 0;
+      padding-left: 20px;
+    }
+
+    .explain-list li {
+      margin-bottom: 8px;
+    }
+
+    .callout {
+      margin: 16px 0;
+      padding: 14px 18px;
+      border-radius: 10px;
+      font-size: 14.5px;
+    }
+
+    .callout-tip {
+      background: var(--green-bg);
+      color: var(--green-text);
+      border-left: 4px solid #10b981;
+    }
+
+    .callout-note {
+      background: var(--amber-bg);
+      color: var(--amber-text);
+      border-left: 4px solid #f59e0b;
+    }
+
+    .callout-info {
+      background: var(--accent-soft);
+      color: #1e40af;
+      border-left: 4px solid var(--accent);
+    }
+
+    /* Code Block */
+    .code-wrap {
+      position: relative;
+      margin: 16px 0;
+      border-radius: 12px;
+      overflow: hidden;
+      background: var(--code-bg);
+      border: 1px solid #1e293b;
+    }
+
+    .code-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 14px;
+      background: #1e293b;
+      color: #cbd5e1;
+      font-size: 12.5px;
+      font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+    }
+
+    .copy-btn {
+      padding: 4px 10px;
+      border: 1px solid #475569;
+      border-radius: 6px;
+      background: transparent;
+      color: #e2e8f0;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .copy-btn:hover {
+      background: #334155;
+    }
+
+    pre {
+      margin: 0;
+      padding: 16px 18px;
+      overflow-x: auto;
+      font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+      font-size: 13.5px;
+      line-height: 1.65;
+      color: var(--code-text);
+    }
+
+    code.inline {
+      padding: 2px 6px;
+      border-radius: 5px;
+      background: var(--surface-soft);
+      border: 1px solid var(--border);
+      font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+      font-size: 0.9em;
+      color: #0f172a;
+    }
+
+    .flow-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      margin: 16px 0;
+    }
+
+    .flow-step {
+      padding: 14px 16px;
+      border-radius: 10px;
+      background: var(--surface-soft);
+      border: 1px solid var(--border);
+    }
+
+    .flow-step .step-num {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 6px;
+      background: var(--accent);
+      color: #fff;
+      font-size: 11.5px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .flow-step h4 {
+      margin: 0 0 4px;
+      font-size: 14.5px;
+      color: #0f172a;
+    }
+
+    .flow-step p {
+      margin: 0;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    /* Q&A Accordion */
+    details.qa {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 16px;
+      margin-bottom: 10px;
+      background: #fcfdff;
+    }
+
+    details.qa summary {
+      cursor: pointer;
+      font-weight: 600;
+      color: #0f172a;
+      list-style: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    details.qa summary::after {
+      content: "+";
+      font-size: 18px;
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    details.qa[open] summary::after {
+      content: "−";
+    }
+
+    details.qa p {
+      margin: 10px 0 0;
+      color: var(--muted);
+      font-size: 14.5px;
+    }
+
+    @media (max-width: 900px) {
+      .layout { grid-template-columns: minmax(0, 1fr); }
+      .sidebar {
+        position: static;
+        height: auto;
+        width: 100%;
+        padding: 20px 16px;
+        border-right: 0;
+        border-bottom: 1px solid var(--border);
+      }
+      .main {
+        min-width: 0;
+        max-width: 100%;
+        padding: 20px 14px 60px;
+      }
+      .hero {
+        padding: 20px 18px;
+      }
+      .hero h2 { font-size: 21px; }
+      .card {
+        padding: 18px 16px;
+        min-width: 0;
+      }
+      .code-wrap {
+        max-width: 100%;
+      }
+      pre {
+        font-size: 12.5px;
+        padding: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand">
+        <span class="brand-tag">080-Athit · Code Review</span>
+        <h1>Frontend Guide<br>Sprint 1–2</h1>
+        <p>Branch: <code class="inline">sprint2-integration</code></p>
+      </div>
+
+      <p class="nav-group-title">สารบัญอ่านเตรียมพรีเซนต์</p>
+      <ul class="nav-list">
+        <li><a href="#overview" class="active"><span class="pbi-pill pbi-all">ภาพรวม</span><span>ภาพรวมงาน 080 (PBI 3–4)</span></a></li>
+        <li><a href="#block-1"><span class="pbi-pill pbi-3">PBI 3</span><span>บล็อก 1: main.js (ปุ่ม My Schedule)</span></a></li>
+        <li><a href="#block-2"><span class="pbi-pill pbi-34">PBI 3–4</span><span>บล็อก 2: Import &amp; DOM Elements</span></a></li>
+        <li><a href="#block-3"><span class="pbi-pill pbi-4">PBI 4</span><span>บล็อก 3: Error Dialog &amp; วาดตาราง</span></a></li>
+        <li><a href="#block-4"><span class="pbi-pill pbi-34">PBI 3–4</span><span>บล็อก 4: initMySchedulePage()</span></a></li>
+        <li><a href="#qa"><span class="pbi-pill pbi-all">Q&amp;A</span><span>แนวคำถามที่อาจารย์มักถาม</span></a></li>
+      </ul>
+    </aside>
+
+    <main class="main">
+      <section id="overview" class="hero">
+        <h2>สรุปโค้ด Frontend ส่วนของ 080 (PBI 3 & PBI 4)</h2>
+        <p>รวมโค้ดจริงทุกบรรทัดที่ติดคอมเมนต์ <strong>//080</strong> ในไฟล์ <code style="color:#fff;font-family:monospace;">frontend/main.js</code> และ <code style="color:#fff;font-family:monospace;">frontend/my-schedule.js</code> พร้อมคำอธิบายทีละจุดสำหรับใช้รีวิวให้อาจารย์ฟัง</p>
+        <div class="hero-badges">
+          <span class="hero-badge">Branch: sprint2-integration</span>
+          <span class="hero-badge">Commit: caff98d</span>
+          <span class="hero-badge">PBI 3: SIGN-IN</span>
+          <span class="hero-badge">PBI 4: VIEW-MY-SCHEDULE</span>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="section-header">
+          <h3>ภาพรวมลำดับการทำงานของหน้าเว็บ</h3>
+          <span class="file-pill">Flow สรุป 5 ขั้นตอน</span>
+        </div>
+        <div class="flow-grid">
+          <div class="flow-step">
+            <span class="step-num">ขั้นที่ 1</span>
+            <h4>กดปุ่ม My Schedule</h4>
+            <p>จากหน้าแรก (<code class="inline">main.js</code>) เปลี่ยนหน้าไป <code class="inline">./my-schedule.html</code> โดยหน้าแรกไม่ยุ่งกับ Keycloak</p>
+          </div>
+          <div class="flow-step">
+            <span class="step-num">ขั้นที่ 2</span>
+            <h4>บังคับ Sign In</h4>
+            <p><code class="inline">requireSignIn()</code> ส่งไปล็อกอิน Keycloak แล้วดึงชื่อจริงมาโชว์ + เปิดปุ่ม Sign Out</p>
+          </div>
+          <div class="flow-step">
+            <span class="step-num">ขั้นที่ 3</span>
+            <h4>เช็ค Role อาจารย์</h4>
+            <p>ถ้ามี role <code class="inline">lecturer</code> โชว์ข้อความ coming soon แล้วหยุดทันที (ไม่ยิง API)</p>
+          </div>
+          <div class="flow-step">
+            <span class="step-num">ขั้นที่ 4</span>
+            <h4>ดึงโปรไฟล์นักศึกษา</h4>
+            <p>ยิง <code class="inline">GET /students/{id}</code> ถ้า 404 แสดง not-student ถ้า 200 แสดง <code class="inline">Year n · Group g</code></p>
+          </div>
+          <div class="flow-step">
+            <span class="step-num">ขั้นที่ 5</span>
+            <h4>โหลด & แยก 2 ตาราง</h4>
+            <p>ยิงขอ <code class="inline">schedules</code> + <code class="inline">selections</code> พร้อมกันด้วย <code class="inline">Promise.all</code> แล้วแยกวาด 2 ตาราง</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- BLOCK 1 -->
+      <section id="block-1" class="card">
+        <div class="section-header">
+          <div class="section-title-group">
+            <span class="pbi-pill pbi-3">PBI 3 · SIGN-IN</span>
+            <h3>บล็อกที่ 1: ปุ่มนำทางไปหน้า My Schedule</h3>
+          </div>
+          <span class="file-pill">frontend/main.js · บรรทัด 178–182</span>
+        </div>
+
+        <div class="code-wrap">
+          <div class="code-toolbar">
+            <span>frontend/main.js (L178–L182)</span>
+            <button class="copy-btn" data-copy>คัดลอกโค้ด</button>
+          </div>
+          <pre><code>//080
+document.getElementById('my-schedule-btn').addEventListener('click', () => {
+    window.location.href = './my-schedule.html';
+});
+//080</code></pre>
+        </div>
+
+        <ul class="explain-list">
+          <li><strong>หน้าที่:</strong> ผูก Event <code class="inline">click</code> ให้กับปุ่ม <code class="inline">My Schedule</code> บนหน้าแรก (<code class="inline">index.html</code>) เพื่อพาผู้ใช้ไปยังหน้าตารางเรียนส่วนตัว</li>
+          <li><strong>ทำไมต้องใช้ <code class="inline">./my-schedule.html</code> (มีจุดนำหน้า):</strong> เพราะระบบจริงรันอยู่ใต้ path ของทีม <code class="inline">/intproj26/&lt;TEAM-PATH&gt;/</code> การใช้ Relative Path <code class="inline">./</code> จะทำให้ยังคงอยู่ใต้ path เดิมของทีม ไม่หลุดออกไป root ของโดเมน (ตรงตาม <strong>TR-01</strong>)</li>
+          <li><strong>แยกสิทธิ์หน้าแรกชัดเจน:</strong> หน้า <code class="inline">index.html</code> และ <code class="inline">main.js</code> ไม่มีการเรียก Keycloak เลยตามเงื่อนไข <strong>PBI 3 ข้อ 3.1</strong> จะเริ่มตรวจการล็อกอินเมื่อเข้ามาหน้า <code class="inline">my-schedule.html</code> แล้วเท่านั้น</li>
+        </ul>
+      </section>
+
+      <!-- BLOCK 2 -->
+      <section id="block-2" class="card">
+        <div class="section-header">
+          <div class="section-title-group">
+            <span class="pbi-pill pbi-3">PBI 3</span>
+            <span class="pbi-pill pbi-4">PBI 4</span>
+            <h3>บล็อกที่ 2: การ Import Auth และอ้างอิง DOM Elements</h3>
+          </div>
+          <span class="file-pill">frontend/my-schedule.js · บรรทัด 1–17</span>
+        </div>
+
+        <div class="code-wrap">
+          <div class="code-toolbar">
+            <span>frontend/my-schedule.js (L1–L17)</span>
+            <button class="copy-btn" data-copy>คัดลอกโค้ด</button>
+          </div>
+          <pre><code>//080
+import { requireSignIn, signOut, authFetch } from './scripts/auth.js';
+
+const userNameEl = document.getElementById('user-name');
+const signOutBtn = document.getElementById('sign-out-btn');
+const studentProfileEl = document.getElementById('student-profile');
+const notStudentEl = document.getElementById('not-student');
+const lecturerMessageEl = document.getElementById('lecturer-message');
+const studentContentEl = document.getElementById('student-content');
+const myScheduleTbody = document.getElementById('my-schedule-tbody');
+const myScheduleEmptyEl = document.getElementById('my-schedule-empty');
+const courseOptionsSection = document.getElementById('course-options-section');
+const courseOptionsHeading = document.getElementById('course-options-heading');
+const courseOptionsTable = document.getElementById('course-options-table');
+const courseOptionsTbody = document.getElementById('course-options-tbody');
+const errorDialog = document.getElementById('error-dialog');
+//080</code></pre>
+        </div>
+
+        <ul class="explain-list">
+          <li><strong>Import จาก <code class="inline">./scripts/auth.js</code>:</strong>
+            <ul>
+              <li><code class="inline">requireSignIn</code> — เช็คสถานะล็อกอินกับ Keycloak ถ้ายังไม่ล็อกอินจะ redirect ไปหน้า Sign In และกลับมาพร้อมข้อมูล <code class="inline">{ username, name, roles }</code></li>
+              <li><code class="inline">signOut</code> — ออกจากระบบ Keycloak และพากลับไปหน้าแรก (<code class="inline">index.html</code>)</li>
+              <li><code class="inline">authFetch</code> — Wrapper ของ <code class="inline">fetch()</code> ที่แนบ Bearer Token ไปกับ Header ให้พร้อม</li>
+            </ul>
+          </li>
+          <li><strong>อ้างอิง DOM Elements ทั้งหมดของ PBI 3 และ PBI 4:</strong> แยกเป็น 4 กลุ่ม ได้แก่ ส่วนหัว (<code class="inline">userNameEl</code>, <code class="inline">signOutBtn</code>, <code class="inline">studentProfileEl</code>), ข้อความสถานะ (<code class="inline">notStudentEl</code>, <code class="inline">lecturerMessageEl</code>), ตารางทั้ง 2 ตาราง (<code class="inline">mySchedule*</code>, <code class="inline">courseOptions*</code>), และ <code class="inline">errorDialog</code></li>
+        </ul>
+      </section>
+
+      <!-- BLOCK 3 -->
+      <section id="block-3" class="card">
+        <div class="section-header">
+          <div class="section-title-group">
+            <span class="pbi-pill pbi-4">PBI 4 · VIEW-MY-SCHEDULE</span>
+            <h3>บล็อกที่ 3: Error Dialog, ฟังก์ชันช่วย และการวาดตารางทั้ง 2 ตาราง</h3>
+          </div>
+          <span class="file-pill">frontend/my-schedule.js · บรรทัด 34–160</span>
+        </div>
+
+        <div class="code-wrap">
+          <div class="code-toolbar">
+            <span>frontend/my-schedule.js (L34–L160)</span>
+            <button class="copy-btn" data-copy>คัดลอกโค้ด</button>
+          </div>
+          <pre><code>//080
+// Prevent Esc from closing the modal error dialog (PBI1 5.3 / PBI4 8)
+errorDialog.addEventListener('cancel', (event) => {
+    event.preventDefault();
+});
+
+errorDialog.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') event.preventDefault();
+});
+
+function showErrorDialog() {
+    if (!errorDialog.open) {
+        errorDialog.showModal();
+    }
+}
+
+// Keep API requests under the same team path as the current page (TR-01)
+function getApiBasePrefix() {
+    const teamPath = window.location.pathname.match(/^\/intproj26\/[^/]+(?=\/|$)/);
+    return (teamPath ? teamPath[0] : '') + '/api/v1';
+}
+
+// Convert MONDAY -> Monday per UI Contract
+function formatDay(dayStr) {
+    if (!dayStr) return '';
+    return dayStr.charAt(0).toUpperCase() + dayStr.slice(1).toLowerCase();
+}
+
+function createScheduleRow(item, actions = []) {
+    const tr = document.createElement('tr');
+    tr.setAttribute('data-testid', 'schedule-row');
+
+    const courseObj = item.course || {};
+    const cells = [
+        { testid: 'code', text: courseObj.code || '' },
+        { testid: 'title', text: courseObj.title || '' },
+        { testid: 'type', text: courseObj.type || '' },
+        { testid: 'section', text: item.section != null ? String(item.section) : '' },
+        { testid: 'group', text: item.studentGroup || '' },
+        { testid: 'day', text: formatDay(item.dayOfWeek) },
+        { testid: 'time', text: `${item.startTime}-${item.endTime}` },
+        { testid: 'weeks', text: `${item.startWeek}-${item.endWeek}` },
+        { testid: 'room', text: item.room || '' },
+        { testid: 'remarks', text: item.remarks || '' }
+    ];
+
+    for (const c of cells) {
+        const td = document.createElement('td');
+        td.setAttribute('data-testid', c.testid);
+        td.textContent = c.text;
+        tr.appendChild(td);
+    }
+
+    const actionCell = document.createElement('td');
+    for (const [label, onAction] of actions) {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'action-btn';
+        if (label === 'Change') button.classList.add('change-btn');
+        button.textContent = label;
+        button.addEventListener('click', () => onAction(item));
+        actionCell.appendChild(button);
+    }
+    tr.appendChild(actionCell);
+
+    return tr;
+}
+
+function renderStudentTables(schedules, selections, { select, remove, change, optionsByCourse }) {
+    const selectedSectionByCourse = new Map();
+    for (const sel of selections) {
+        selectedSectionByCourse.set(Number(sel.courseId), Number(sel.section));
+    }
+
+    const myScheduleRows = [];
+    const courseOptionRows = [];
+
+    for (const item of schedules) {
+        const courseId = Number(item.course?.id);
+        if (item.fixed) {
+            myScheduleRows.push(item);
+        } else if (selectedSectionByCourse.has(courseId)) {
+            if (selectedSectionByCourse.get(courseId) === Number(item.section)) {
+                myScheduleRows.push(item);
+            }
+        } else {
+            courseOptionRows.push(item);
+        }
+    }
+
+    // Render "My Schedule" table
+    myScheduleTbody.innerHTML = '';
+    if (myScheduleRows.length === 0) {
+        myScheduleEmptyEl.hidden = false;
+    } else {
+        myScheduleEmptyEl.hidden = true;
+        for (const row of myScheduleRows) {
+            const rowActions = [];
+            if (!row.fixed) {
+                const sections = optionsByCourse.get(row.course.id);
+                if (sections.size > 1) {
+                    rowActions.push(['Change', (item) => change(item, sections)]);
+                }
+                rowActions.push(['Remove', remove]);
+            }
+            myScheduleTbody.appendChild(createScheduleRow(row, rowActions));
+        }
+    }
+
+    // Render "Courses to Choose" table (hidden along with its heading when empty: PBI4 5.2)
+    courseOptionsTbody.innerHTML = '';
+    if (courseOptionRows.length === 0) {
+        courseOptionsSection.hidden = true;
+        courseOptionsHeading.hidden = true;
+        courseOptionsTable.hidden = true;
+    } else {
+        courseOptionsSection.hidden = false;
+        courseOptionsHeading.hidden = false;
+        courseOptionsTable.hidden = false;
+        for (const row of courseOptionRows) {
+            courseOptionsTbody.appendChild(createScheduleRow(row, [['Select', select]]));
+        }
+    }
+
+    studentContentEl.hidden = false;
+}
+//080</code></pre>
+        </div>
+
+        <h4 class="sub-heading">เจาะลึกทีละฟังก์ชันในบล็อกนี้</h4>
+        <ul class="explain-list">
+          <li><strong>1. ป้องกันการปิด Error Dialog (<code class="inline">cancel</code> & <code class="inline">keydown</code>):</strong> ตามกฎ PBI 1 ข้อ 5.3 และ PBI 4 ข้อ 8 เมื่อเกิด Error ตอนโหลดข้อมูล ต้องเปิด Modal Dialog ด้วย <code class="inline">.showModal()</code> ที่ไม่มีปุ่มปิด และกด <code class="inline">Esc</code> ต้องไม่ปิด เราจึงดักทั้ง event <code class="inline">cancel</code> และ <code class="inline">Escape</code> แล้วสั่ง <code class="inline">event.preventDefault()</code></li>
+          <li><strong>2. <code class="inline">getApiBasePrefix()</code>:</strong> ใช้ Regex ตรวจว่าเว็บเปิดอยู่ที่ path <code class="inline">/intproj26/&lt;TEAM-PATH&gt;</code> หรือไม่ เพื่อให้ยิง API ใต้ path ของทีมตัวเองเสมอทั้งตอนรันในเครื่อง (<code class="inline">localhost</code>) และบนเซิร์ฟเวอร์จริง (ตรงตาม <strong>TR-01</strong>)</li>
+          <li><strong>3. <code class="inline">formatDay(dayStr)</code>:</strong> แปลงชื่อวันจาก Database ที่เป็นตัวพิมพ์ใหญ่ล้วน (<code class="inline">MONDAY</code>) ให้เป็นรูปแบบ UI Contract (<code class="inline">Monday</code>)</li>
+          <li><strong>4. <code class="inline">createScheduleRow(item, actions)</code>:</strong> สร้างแถว <code class="inline">&lt;tr data-testid="schedule-row"&gt;</code> พร้อมคอลัมน์ข้อมูลครบ 10 ช่อง (เพิ่ม <code class="inline">room</code> ระหว่าง <code class="inline">weeks</code> กับ <code class="inline">remarks</code> ตาม PBI 4) ถ้าค่าใดเป็น <code class="inline">null</code> จะแสดงเป็นช่องว่าง</li>
+          <li><strong>5. <code class="inline">renderStudentTables(...)</code> (หัวใจของ PBI 4):</strong>
+            <ul>
+              <li>สร้าง <code class="inline">Map</code> เก็บคู่ <code class="inline">courseId → section</code> ของวิชาที่นักศึกษาเลือกไว้แล้ว เพื่อให้ค้นหาได้เร็วแบบ O(1)</li>
+              <li>วนลูป <code class="inline">schedules</code> จาก Backend เพื่อแยกเป็น 2 กอง:
+                <br>• ถ้า <code class="inline">item.fixed === true</code> → เข้าตาราง <strong>My Schedule</strong> (ใช้ค่า <code class="inline">fixed</code> จาก Backend โดยตรง หน้าเว็บไม่คำนวณเอง)
+                <br>• ถ้าไม่ใช่ fixed แต่นักศึกษาเลือกวิชานี้ไว้แล้ว → เอาเฉพาะแถวที่ <code class="inline">section</code> ตรงกับที่เลือกเข้า <strong>My Schedule</strong> (section อื่นของวิชานี้จะถูกข้ามไป ไม่แสดงใน Courses to Choose)
+                <br>• ถ้ายังไม่ได้เลือกวิชานี้เลย → เข้าตาราง <strong>Courses to Choose</strong>
+              </li>
+              <li><strong>รักษาการเรียงลำดับอัตโนมัติ:</strong> เนื่องจาก Backend เรียง <code class="inline">schedules</code> ตามลำดับ PBI 1 มาให้แล้ว การกรองด้วยลูป <code class="inline">for...of</code> จึงคงลำดับที่ถูกต้องไว้ทั้ง 2 ตารางโดยไม่ต้อง sort ใหม่</li>
+              <li><strong>จัดการสถานะว่าง (Empty State):</strong>
+                <br>• ถ้า <code class="inline">My Schedule</code> ไม่มีแถวเลย (เช่น ปี 3 ที่ไม่มีวิชา fixed) → แสดงข้อความ <code class="inline">No classes yet. Choose from Courses to Choose.</code>
+                <br>• ถ้า <code class="inline">Courses to Choose</code> ไม่มีแถวเหลือ → ซ่อนทั้ง <code class="inline">&lt;section&gt;</code>, หัวข้อ <code class="inline">&lt;h2&gt;</code>, และตัวตารางตามกฎ <strong>PBI 4 ข้อ 5.2</strong>
+              </li>
+            </ul>
+          </li>
+        </ul>
+
+        <div class="callout callout-note">
+          <strong>โน้ตเผื่ออาจารย์ถาม:</strong> ใน <code class="inline">createScheduleRow</code> (ส่วนสร้างปุ่ม <code class="inline">actionCell</code>) และใน <code class="inline">renderStudentTables</code> (ส่วนส่งปุ่ม <code class="inline">Select / Remove / Change</code>) เป็นโค้ดที่เพื่อนในทีมมาต่อยอดเติมเข้าไปในฟังก์ชันที่คุณสร้างไว้ตอนทำ PBI 5, 6, 7 ครับ
+        </div>
+      </section>
+
+      <!-- BLOCK 4 -->
+      <section id="block-4" class="card">
+        <div class="section-header">
+          <div class="section-title-group">
+            <span class="pbi-pill pbi-3">PBI 3</span>
+            <span class="pbi-pill pbi-4">PBI 4</span>
+            <h3>บล็อกที่ 4: ฟังก์ชันหลักตอนโหลดหน้าเว็บ initMySchedulePage()</h3>
+          </div>
+          <span class="file-pill">frontend/my-schedule.js · บรรทัด 298–361</span>
+        </div>
+
+        <div class="code-wrap">
+          <div class="code-toolbar">
+            <span>frontend/my-schedule.js (L298–L361)</span>
+            <button class="copy-btn" data-copy>คัดลอกโค้ด</button>
+          </div>
+          <pre><code>//080
+async function initMySchedulePage() {
+    const user = await requireSignIn();
+    userNameEl.textContent = user.name || '';
+    signOutBtn.addEventListener('click', signOut);
+    signOutBtn.disabled = false;
+
+    // PBI4 7: Lecturer sees the lecturer message and no profile or tables
+    if (Array.isArray(user.roles) && user.roles.includes('lecturer')) {
+        lecturerMessageEl.hidden = false;
+        return;
+    }
+
+    const apiPrefix = getApiBasePrefix();
+    const studentId = user.username;
+
+    try {
+        // 1. Read student profile (GET /api/v1/students/{studentId})
+        const profileRes = await authFetch(`${apiPrefix}/students/${encodeURIComponent(studentId)}`);
+        if (profileRes.status === 404) {
+            // PBI4 3.2: Not a student of the BSc.IT program
+            notStudentEl.hidden = false;
+            return;
+        }
+        if (profileRes.status !== 200) {
+            throw new Error(`Unexpected profile status: ${profileRes.status}`);
+        }
+
+        const profile = await profileRes.json();
+        // UI Contract: Year &lt;n&gt; · Group &lt;g&gt; (middle dot U+00B7 with spaces)
+        studentProfileEl.textContent = `Year ${profile.yearLevel} \u00B7 Group ${profile.studentGroup}`;
+        studentProfileEl.hidden = false;
+
+        // 2. Read year-level schedules and student selections once each (PBI4 6 / TR-06)
+        const schedulesUrl = `${apiPrefix}/year-levels/${encodeURIComponent(profile.yearLevel)}/schedules?studentGroup=${encodeURIComponent(profile.studentGroup)}`;
+        const selectionsUrl = `${apiPrefix}/students/${encodeURIComponent(studentId)}/selections`;
+
+        const [schedulesRes, selectionsRes] = await Promise.all([
+            authFetch(schedulesUrl),
+            authFetch(selectionsUrl)
+        ]);
+
+        if (schedulesRes.status !== 200 || selectionsRes.status !== 200) {
+            throw new Error('Failed to load schedules or selections');
+        }
+
+        const [schedules, selections] = await Promise.all([
+            schedulesRes.json(),
+            selectionsRes.json()
+        ]);
+
+        if (!Array.isArray(schedules) || !Array.isArray(selections)) {
+            throw new Error('Invalid response format');
+        }
+
+        const actions = createSelectionActions(schedules, selections, selectionsUrl);
+        renderStudentTables(schedules, selections, actions);
+    } catch (err) {
+        showErrorDialog();
+    }
+}
+
+initMySchedulePage();
+//080</code></pre>
+        </div>
+
+        <ul class="explain-list">
+          <li><strong>ขั้นที่ 1 — Auth & ปุ่ม Sign Out:</strong> รอ <code class="inline">await requireSignIn()</code> จนได้ข้อมูลผู้ใช้ นำ <code class="inline">user.name</code> มาแสดง ผูกปุ่ม <code class="inline">Sign Out</code> แล้วจึงปลดล็อก <code class="inline">signOutBtn.disabled = false</code> เพื่อป้องกันไม่ให้กดปุ่มได้ก่อนที่ระบบ Auth จะพร้อม</li>
+          <li><strong>ขั้นที่ 2 — เช็ค Role อาจารย์ (PBI 4 ข้อ 7 / TC-PBI4-12):</strong> ถ้า <code class="inline">user.roles</code> มี <code class="inline">'lecturer'</code> ให้แสดงข้อความ <code class="inline">"The lecturer view is coming soon"</code> แล้ว <code class="inline">return</code> ทันที เพื่อไม่ให้ยิง API ของนักศึกษาเลย</li>
+          <li><strong>ขั้นที่ 3 — ดึงโปรไฟล์นักศึกษา (PBI 4 ข้อ 3 / TC-PBI4-13, 17):</strong>
+            <ul>
+              <li>ยิง <code class="inline">GET /api/v1/students/{studentId}</code> โดยใช้ <code class="inline">studentId = user.username</code> (คือ <code class="inline">preferred_username</code> จาก Token)</li>
+              <li>ถ้าได้ <code class="inline">404</code> → แสดง <code class="inline">notStudentEl</code> แล้ว <code class="inline">return</code> ทันที (ไม่เปิด Error Dialog และไม่ยิงขอ schedules/selections ต่อ)</li>
+              <li>ถ้าได้ <code class="inline">200</code> → แสดง <code class="inline">Year ${profile.yearLevel} · Group ${profile.studentGroup}</code> โดยใช้ <code class="inline">\u00B7</code> (Middle dot) ตาม UI Contract</li>
+            </ul>
+          </li>
+          <li><strong>ขั้นที่ 4 — ยิงขอตารางเรียน + วิชาที่เลือกพร้อมกัน (PBI 4 ข้อ 6 & TR-06):</strong> ใช้ <code class="inline">Promise.all</code> เรียกทั้ง 2 เส้นพร้อมกันอย่างละ 1 ครั้ง ตรวจว่าทั้งคู่ตอบ <code class="inline">200</code> และเป็น <code class="inline">Array</code> จริง ก่อนส่งไปวาดตารางผ่าน <code class="inline">renderStudentTables()</code></li>
+          <li><strong>ขั้นที่ 5 — รวมดัก Error ใน <code class="inline">catch</code> (PBI 4 ข้อ 8):</strong> หาก API ตัวใดตัวหนึ่งล่ม (เช่น 500 หรือ Network Error) จะโยนเข้า <code class="inline">catch</code> และเรียก <code class="inline">showErrorDialog()</code> เปิด Modal แจ้งปัญหาทันที</li>
+        </ul>
+
+        <div class="callout callout-tip">
+          <strong>เทคนิคตอนพูดพรีเซนต์:</strong> ย้ำกับอาจารย์ว่าโค้ดของเรา <em>"ไม่คำนวณชั้นปี, กลุ่มเรียน หรือค่า fixed เองใน Frontend"</em> แต่รับจาก Backend ทั้งหมด และใช้ <code class="inline">Promise.all</code> เพื่อโหลดข้อมูลแค่ครั้งเดียวตามกฎ <strong>TR-06</strong> ครับ
+        </div>
+      </section>
+
+      <!-- Q&A -->
+      <section id="qa" class="card">
+        <div class="section-header">
+          <h3>แนวคำถามที่อาจารย์มักถามตอน Review โค้ด</h3>
+          <span class="file-pill">คลิกเพื่อดูคำตอบ</span>
+        </div>
+
+        <details class="qa">
+          <summary>1. ทำไมปุ่ม Sign Out ใน HTML ถึงต้องใส่ disabled ไว้ก่อน แล้วค่อยมาเปิดใน JS?</summary>
+          <p>เพราะการเช็คสถานะล็อกอินกับ Keycloak (<code class="inline">await requireSignIn()</code>) เป็นการทำงานแบบ Asynchronous ถ้าปล่อยให้ปุ่มกดได้ตั้งแต่แรก ผู้ใช้ (หรือ Playwright test) อาจกดปุ่มก่อนที่บรรทัด <code class="inline">addEventListener('click', signOut)</code> จะทำงาน ทำให้กดไม่ติด จึงต้องใส่ <code class="inline">disabled</code> ไว้ใน HTML แล้วค่อยปลดล็อกเป็น <code class="inline">false</code> หลังผูก Event เสร็จครับ</p>
+        </details>
+
+        <details class="qa">
+          <summary>2. ทำไมตอนล็อกอินเป็นอาจารย์ หรือตอนได้ 404 (ไม่ใช่นักศึกษา BSc.IT) ถึงต้องรีบ return ออกเลย?</summary>
+          <p>ตามเงื่อนไขของ PBI 4 ข้อ 7 (<code class="inline">TC-PBI4-12</code>) และข้อ 3.2 (<code class="inline">TC-PBI4-13</code>) ระบุว่าห้ามหน้าเว็บยิง request ไปขอ <code class="inline">schedules</code> หรือ <code class="inline">selections</code> ต่อโดยไม่จำเป็นครับ การ <code class="inline">return</code> ทันทีจึงช่วยประหยัด request และผ่านเงื่อนไขการตรวจ network ของชุดเทสครับ</p>
+        </details>
+
+        <details class="qa">
+          <summary>3. ทำไมตอนแยกตารางใน renderStudentTables() ถึงไม่ต้องเขียนฟังก์ชัน sort ใหม่?</summary>
+          <p>เพราะ Backend API (<code class="inline">GET /api/v1/year-levels/{yearLevel}/schedules</code>) เรียงลำดับข้อมูลตามกฎ PBI 1 มาให้เรียบร้อยแล้ว เมื่อเราใช้ลูป <code class="inline">for (const item of schedules)</code> ไล่จากตัวแรกไปตัวสุดท้ายแล้วแยก push ลง <code class="inline">myScheduleRows</code> กับ <code class="inline">courseOptionRows</code> ลำดับของทั้งสองตารางก็จะยังคงตรงตาม PBI 1 โดยอัตโนมัติครับ</p>
+        </details>
+
+        <details class="qa">
+          <summary>4. ทำไมต้องใช้ Promise.all ตอนโหลด schedules กับ selections?</summary>
+          <p>เพราะหลังจากได้ <code class="inline">profile.yearLevel</code> และ <code class="inline">profile.studentGroup</code> แล้ว คำขอ <code class="inline">GET /year-levels/.../schedules</code> และ <code class="inline">GET /students/.../selections</code> ไม่ได้ขึ้นต่อกัน จึงยิงพร้อมกันแบบขนานด้วย <code class="inline">Promise.all</code> เพื่อให้หน้าเว็บโหลดเร็วขึ้น และยังคงเรียกอย่างละ 1 ครั้งตามกฎ <strong>TR-06</strong> ครับ</p>
+        </details>
+
+        <details class="qa">
+          <summary>5. ทำไม Error Dialog ต้องดักทั้ง event 'cancel' และ 'keydown' (Escape)?</summary>
+          <p>ปกติเมื่อกด <code class="inline">Esc</code> บน <code class="inline">&lt;dialog&gt;</code> ที่เปิดด้วย <code class="inline">showModal()</code> เบราว์เซอร์จะยิงอีเวนต์ <code class="inline">cancel</code> เพื่อปิดหน้าต่าง แต่ในเบราว์เซอร์ยุคใหม่ (Chrome) มี Close Watcher ที่ถ้ากด <code class="inline">Esc</code> ซ้ำสองครั้งติดกันอาจยอมให้ปิดได้ การดักทั้ง <code class="inline">cancel</code> และ <code class="inline">keydown</code> จึงช่วยให้มั่นใจว่ากด <code class="inline">Esc</code> กี่ครั้ง Dialog ก็จะไม่ปิดตามเงื่อนไข PBI 1 ข้อ 5.3 / PBI 4 ข้อ 8 ครับ</p>
+        </details>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    // Copy code button handler
+    document.querySelectorAll('[data-copy]').forEach((btn) => {
+      btn.addEventListener('click', async () => {
+        const code = btn.closest('.code-wrap').querySelector('pre code').textContent;
+        try {
+          await navigator.clipboard.writeText(code);
+          const original = btn.textContent;
+          btn.textContent = 'คัดลอกแล้ว!';
+          setTimeout(() => { btn.textContent = original; }, 1500);
+        } catch {
+          btn.textContent = 'คัดลอกไม่สำเร็จ';
+        }
+      });
+    });
+
+    // Highlight active section in sidebar while scrolling
+    const navLinks = [...document.querySelectorAll('.nav-list a')];
+    const sections = navLinks.map((a) => document.querySelector(a.getAttribute('href'))).filter(Boolean);
+
+    const observer = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) {
+          const id = '#' + entry.target.id;
+          navLinks.forEach((a) => a.classList.toggle('active', a.getAttribute('href') === id));
+        }
+      }
+    }, { rootMargin: '-20% 0px -65% 0px' });
+
+    sections.forEach((s) => observer.observe(s));
+  </script>
+</body>
+</html>
