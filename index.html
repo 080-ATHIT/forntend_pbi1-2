@@ -6,12 +6,16 @@
   <title>Code Review Guide (080) — Sprint 1–2 Frontend</title>
   <style>
     :root {
+      color-scheme: light;
       --bg: #f6f8fb;
       --surface: #ffffff;
       --surface-soft: #f1f5f9;
       --border: #e2e8f0;
       --text: #1e293b;
+      --heading: #0f172a;
+      --sub-heading: #1e3a8a;
       --muted: #475569;
+      --subtle: #64748b;
       --accent: #2563eb;
       --accent-soft: #eff6ff;
       --accent-border: #bfdbfe;
@@ -19,9 +23,52 @@
       --green-text: #065f46;
       --amber-bg: #fffbeb;
       --amber-text: #92400e;
+      --qa-bg: #fcfdff;
       --code-bg: #0f172a;
+      --code-toolbar-bg: #1e293b;
       --code-text: #e2e8f0;
+      --pill-3-bg: #dcfce7;
+      --pill-3-text: #15803d;
+      --pill-4-bg: #fef3c7;
+      --pill-4-text: #b45309;
+      --pill-34-bg: #e0e7ff;
+      --pill-34-text: #3730a3;
+      --pill-all-bg: #e2e8f0;
+      --pill-all-text: #334155;
       --shadow: 0 4px 16px rgba(15, 23, 42, 0.06);
+    }
+
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --bg: #0b1120;
+      --surface: #111827;
+      --surface-soft: #1e293b;
+      --border: #263248;
+      --text: #e2e8f0;
+      --heading: #f8fafc;
+      --sub-heading: #93c5fd;
+      --muted: #94a3b8;
+      --subtle: #94a3b8;
+      --accent: #60a5fa;
+      --accent-soft: rgba(59, 130, 246, 0.16);
+      --accent-border: rgba(96, 165, 250, 0.35);
+      --green-bg: rgba(16, 185, 129, 0.14);
+      --green-text: #6ee7b7;
+      --amber-bg: rgba(245, 158, 11, 0.14);
+      --amber-text: #fcd34d;
+      --qa-bg: #162033;
+      --code-bg: #070b14;
+      --code-toolbar-bg: #162033;
+      --code-text: #e2e8f0;
+      --pill-3-bg: rgba(34, 197, 94, 0.18);
+      --pill-3-text: #86efac;
+      --pill-4-bg: rgba(245, 158, 11, 0.2);
+      --pill-4-text: #fde68a;
+      --pill-34-bg: rgba(99, 102, 241, 0.22);
+      --pill-34-text: #c7d2fe;
+      --pill-all-bg: #263248;
+      --pill-all-text: #cbd5e1;
+      --shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
     }
 
     * { box-sizing: border-box; }
@@ -68,11 +115,39 @@
       letter-spacing: 0.03em;
     }
 
+    .brand-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .theme-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--surface-soft);
+      color: var(--text);
+      font: inherit;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+    }
+
+    .theme-toggle:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
     .brand h1 {
       margin: 10px 0 4px;
       font-size: 20px;
       line-height: 1.3;
-      color: #0f172a;
+      color: var(--heading);
     }
 
     .brand p {
@@ -87,7 +162,7 @@
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.06em;
-      color: #64748b;
+      color: var(--subtle);
     }
 
     .nav-list {
@@ -134,10 +209,10 @@
       margin-top: 2px;
     }
 
-    .pbi-3 { background: #dcfce7; color: #15803d; }
-    .pbi-4 { background: #fef3c7; color: #b45309; }
-    .pbi-34 { background: #e0e7ff; color: #3730a3; }
-    .pbi-all { background: #e2e8f0; color: #334155; }
+    .pbi-3 { background: var(--pill-3-bg); color: var(--pill-3-text); }
+    .pbi-4 { background: var(--pill-4-bg); color: var(--pill-4-text); }
+    .pbi-34 { background: var(--pill-34-bg); color: var(--pill-34-text); }
+    .pbi-all { background: var(--pill-all-bg); color: var(--pill-all-text); }
 
     .section-title-group {
       display: flex;
@@ -212,7 +287,7 @@
     .section-header h3 {
       margin: 0;
       font-size: 20px;
-      color: #0f172a;
+      color: var(--heading);
     }
 
     .file-pill {
@@ -225,14 +300,14 @@
       border: 1px solid var(--border);
       font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
       font-size: 12.5px;
-      color: #334155;
+      color: var(--text);
     }
 
     .sub-heading {
       margin: 22px 0 10px;
       font-size: 16px;
       font-weight: 700;
-      color: #1e3a8a;
+      color: var(--sub-heading);
     }
 
     .explain-list {
@@ -276,7 +351,7 @@
       border-radius: 12px;
       overflow: hidden;
       background: var(--code-bg);
-      border: 1px solid #1e293b;
+      border: 1px solid var(--border);
     }
 
     .code-toolbar {
@@ -284,7 +359,7 @@
       align-items: center;
       justify-content: space-between;
       padding: 8px 14px;
-      background: #1e293b;
+      background: var(--code-toolbar-bg);
       color: #cbd5e1;
       font-size: 12.5px;
       font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
@@ -321,7 +396,7 @@
       border: 1px solid var(--border);
       font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
       font-size: 0.9em;
-      color: #0f172a;
+      color: var(--heading);
     }
 
     .flow-grid {
@@ -342,7 +417,7 @@
       display: inline-block;
       padding: 2px 8px;
       border-radius: 6px;
-      background: var(--accent);
+      background: #2563eb;
       color: #fff;
       font-size: 11.5px;
       font-weight: 700;
@@ -352,7 +427,7 @@
     .flow-step h4 {
       margin: 0 0 4px;
       font-size: 14.5px;
-      color: #0f172a;
+      color: var(--heading);
     }
 
     .flow-step p {
@@ -367,13 +442,13 @@
       border-radius: 10px;
       padding: 12px 16px;
       margin-bottom: 10px;
-      background: #fcfdff;
+      background: var(--qa-bg);
     }
 
     details.qa summary {
       cursor: pointer;
       font-weight: 600;
-      color: #0f172a;
+      color: var(--heading);
       list-style: none;
       display: flex;
       justify-content: space-between;
@@ -435,7 +510,13 @@
   <div class="layout">
     <aside class="sidebar">
       <div class="brand">
-        <span class="brand-tag">080-Athit · Code Review</span>
+        <div class="brand-top">
+          <span class="brand-tag">080-Athit · Code Review</span>
+          <button type="button" id="theme-toggle" class="theme-toggle" aria-label="สลับโหมดสี">
+            <span id="theme-icon" aria-hidden="true">🌙</span>
+            <span id="theme-label">Dark</span>
+          </button>
+        </div>
         <h1>Frontend Guide<br>Sprint 1–2</h1>
         <p>Branch: <code class="inline">sprint2-integration</code></p>
       </div>
@@ -882,6 +963,30 @@ initMySchedulePage();
   </div>
 
   <script>
+    // Dark / Light mode toggle with localStorage persistence
+    const rootEl = document.documentElement;
+    const themeToggleBtn = document.getElementById('theme-toggle');
+    const themeIconEl = document.getElementById('theme-icon');
+    const themeLabelEl = document.getElementById('theme-label');
+
+    function applyTheme(theme) {
+      const isDark = theme === 'dark';
+      rootEl.setAttribute('data-theme', isDark ? 'dark' : 'light');
+      themeIconEl.textContent = isDark ? '☀️' : '🌙';
+      themeLabelEl.textContent = isDark ? 'Light' : 'Dark';
+      themeToggleBtn.setAttribute('aria-pressed', String(isDark));
+    }
+
+    const savedTheme = localStorage.getItem('review-guide-theme');
+    const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    applyTheme(savedTheme || (prefersDark ? 'dark' : 'light'));
+
+    themeToggleBtn.addEventListener('click', () => {
+      const nextTheme = rootEl.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      localStorage.setItem('review-guide-theme', nextTheme);
+      applyTheme(nextTheme);
+    });
+
     // Copy code button handler
     document.querySelectorAll('[data-copy]').forEach((btn) => {
       btn.addEventListener('click', async () => {
